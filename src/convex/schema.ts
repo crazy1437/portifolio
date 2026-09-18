@@ -62,4 +62,30 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_restaurant", ["restaurantId"]),
+
+  // real OTP auth: one row per human, upserted on first successful login
+  users: defineTable({
+    email: v.string(),
+    name: v.string(),
+    createdAt: v.number(),
+    lastLoginAt: v.optional(v.number()),
+  }).index("by_email", ["email"]),
+
+  // hashed 6-digit login codes; only the latest unconsumed code per email counts
+  authCodes: defineTable({
+    email: v.string(),
+    codeHash: v.string(),
+    attempts: v.number(),
+    consumed: v.boolean(),
+    createdAt: v.number(),
+    expiresAt: v.number(),
+  }).index("by_email", ["email"]),
+
+  // bearer tokens for signed-in devices (30-day expiry, cleaned on sign-out)
+  sessions: defineTable({
+    userId: v.id("users"),
+    token: v.string(),
+    createdAt: v.number(),
+    expiresAt: v.number(),
+  }).index("by_token", ["token"]),
 });
