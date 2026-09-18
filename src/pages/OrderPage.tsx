@@ -573,7 +573,7 @@ function CartDrawer() {
                   ) : (
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                       <div className="mt-4 rounded-2xl border-2 border-pulp-950 bg-white p-3 text-sm font-bold">
-                        Paying with <span className="text-pepper-500">MenuMoto Mock Pay</span> — no card needed in
+                        Paying with <span className="text-pepper-500">JuicyBruh Mock Pay</span> — no card needed in
                         this demo.
                       </div>
                       <button

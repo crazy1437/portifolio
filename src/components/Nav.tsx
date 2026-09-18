@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ShoppingCart, Menu as MenuIcon, X, Bike, ChevronDown, LogOut, Package } from "lucide-react";
+import { ShoppingCart, Menu as MenuIcon, X, Bike, ChevronDown, LogOut, Package, Store } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCart, useSession, signOut } from "../lib/store";
 
@@ -37,7 +37,7 @@ export default function Nav() {
   return (
     <header className="sticky top-0 z-50 border-b-2 border-pulp-950 bg-cream-50/90 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-        <Link to="/" className="group flex items-center gap-2" aria-label="MenuMoto home">
+        <Link to="/" className="group flex items-center gap-2" aria-label="JuicyBruh home">
           <span className="grid h-10 w-10 place-items-center rounded-2xl border-2 border-pulp-950 bg-pepper-500 text-cream-50 shadow-chunky-sm transition-transform group-hover:animate-wobble">
             <Bike className="h-5 w-5" strokeWidth={2.75} />
           </span>
@@ -93,6 +93,12 @@ export default function Nav() {
                       className="flex items-center gap-2 px-4 py-2.5 font-bold hover:bg-cream-100"
                     >
                       <Package className="h-4 w-4" /> Orders & tracking
+                    </Link>
+                    <Link
+                      to="/partner"
+                      className="flex items-center gap-2 px-4 py-2.5 font-bold hover:bg-cream-100"
+                    >
+                      <Store className="h-4 w-4" /> Partner dashboard
                     </Link>
                     <button
                       onClick={() => {
@@ -167,6 +173,9 @@ export default function Nav() {
               </Link>
               <Link to="/track" onClick={() => setOpen(false)} className="rounded-xl px-3 py-2.5 font-bold hover:bg-cream-200">
                 Orders & tracking
+              </Link>
+              <Link to="/partner" onClick={() => setOpen(false)} className="rounded-xl px-3 py-2.5 font-bold hover:bg-cream-200">
+                Partner dashboard
               </Link>
               {session ? (
                 <button

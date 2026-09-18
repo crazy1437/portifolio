@@ -51,7 +51,7 @@ export default function AuthPage() {
           <span className="grid h-9 w-9 place-items-center rounded-xl border-2 border-pulp-950 bg-pepper-500 text-cream-50 shadow-chunky-sm">
             <Bike className="h-4 w-4" strokeWidth={2.75} />
           </span>
-          MenuMoto
+          JuicyBruh
         </Link>
 
         <motion.div

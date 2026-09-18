@@ -142,7 +142,7 @@ export default function LandingPage() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="mt-7 max-w-xl text-lg font-bold text-pulp-800 sm:text-xl"
           >
-            MenuMoto sends real scooters through a real (tiny 3D) city to bring you
+            JuicyBruh sends real scooters through a real (tiny 3D) city to bring you
             smash burgers, midnight ramen and street tacos in minutes.
           </motion.p>
 
@@ -206,7 +206,7 @@ export default function LandingPage() {
       <section className="section-pad mx-auto max-w-7xl py-20 sm:py-28">
         <div className="mx-auto max-w-2xl text-center">
           <motion.div {...fadeUp} className="eyebrow bg-mango-300">
-            <Sparkles className="h-3.5 w-3.5" /> Why MenuMoto
+            <Sparkles className="h-3.5 w-3.5" /> Why JuicyBruh
           </motion.div>
           <motion.h2 {...fadeUp} className="mt-4 font-display text-4xl font-black sm:text-5xl">
             Built different. <span className="text-pepper-500">Built juicy.</span>
