@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Bike, ArrowRight, Flame, Timer } from "lucide-react";
+import { ArrowRight, Flame, Timer } from "lucide-react";
+import { JuicyMark } from "../components/Logo";
 import { getSession, signIn, useSession } from "../lib/store";
 
 export default function AuthPage() {
@@ -48,9 +49,7 @@ export default function AuthPage() {
           to="/"
           className="absolute left-5 top-5 z-10 inline-flex items-center gap-2 font-extrabold text-pulp-700 transition-colors hover:text-pepper-500"
         >
-          <span className="grid h-9 w-9 place-items-center rounded-xl border-2 border-pulp-950 bg-pepper-500 text-cream-50 shadow-chunky-sm">
-            <Bike className="h-4 w-4" strokeWidth={2.75} />
-          </span>
+          <JuicyMark className="h-9 w-9" />
           JuicyBruh
         </Link>
 

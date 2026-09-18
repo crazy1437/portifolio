@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ShoppingCart, Menu as MenuIcon, X, Bike, ChevronDown, LogOut, Package, Store } from "lucide-react";
+import { ShoppingCart, Menu as MenuIcon, X, ChevronDown, LogOut, Package, Store } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCart, useSession, signOut } from "../lib/store";
+import { LogoLockup } from "./Logo";
 
 export default function Nav() {
   const cart = useCart();
@@ -37,13 +38,8 @@ export default function Nav() {
   return (
     <header className="sticky top-0 z-50 border-b-2 border-pulp-950 bg-cream-50/90 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-        <Link to="/" className="group flex items-center gap-2" aria-label="JuicyBruh home">
-          <span className="grid h-10 w-10 place-items-center rounded-2xl border-2 border-pulp-950 bg-pepper-500 text-cream-50 shadow-chunky-sm transition-transform group-hover:animate-wobble">
-            <Bike className="h-5 w-5" strokeWidth={2.75} />
-          </span>
-          <span className="font-display text-2xl font-black tracking-tight">
-            Menu<span className="text-pepper-500">Moto</span>
-          </span>
+        <Link to="/" className="group flex items-center" aria-label="JuicyBruh home">
+          <LogoLockup className="transition-transform group-hover:animate-wobble" />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
