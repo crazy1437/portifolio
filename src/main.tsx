@@ -3,9 +3,11 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { ConvexProvider, ConvexReactClient } from "convex/react";
 import App from "./App";
+import { attachConvexClient } from "./lib/store";
 import "./index.css";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
+attachConvexClient(convex);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

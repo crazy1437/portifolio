@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from "react";
+import { api } from "../convex/_generated/api";
 import type { OrderStatus } from "./data";
 import { ORDER_FLOW } from "./data";
 
@@ -22,60 +23,105 @@ function makeStore<T>(initial: T) {
   };
 }
 
-function useStoreValue<T>(store: ReturnType<typeof makeStore<T>>): T {
-  return useSyncExternalStore(store.subscribe, store.get, store.get);
-}
+/* ---------------- session (real OTP auth via Convex) ---------------- */
 
-/* ---------------- session (mock auth, localStorage) ---------------- */
+export type SessionUser = { id: string; name: string; email: string; initials: string };
+export type RawSession = { token: string; user: SessionUser };
 
-export type SessionUser = { name: string; email: string; initials: string; id: string };
+const SESSION_KEY = "juicybruh.session.v2";
 
-const SESSION_KEY = "juicybruh.session";
+const sessionStore = makeStore<RawSession | null>(readSession());
 
-const sessionStore = makeStore<SessionUser | null>(readSession());
-
-function readSession(): SessionUser | null {
+function readSession(): RawSession | null {
   try {
     const raw = localStorage.getItem(SESSION_KEY);
-    return raw ? (JSON.parse(raw) as SessionUser) : null;
+    return raw ? (JSON.parse(raw) as RawSession) : null;
   } catch {
     return null;
   }
 }
 
-export function getSession() {
-  return sessionStore.get();
-}
-
-export function signIn(name: string, email: string): SessionUser {
-  const existing = readSession();
-  const user: SessionUser = {
-    // stable id per browser so Convex orders keep belonging to the same user
-    id: existing?.id ?? `u-${crypto.randomUUID()}`,
-    name: name.trim() || "Juicy Rider",
-    email: email.trim() || "hungry@juicybruh.app",
-    initials: (name.trim()[0] || "J").toUpperCase(),
-  };
+function persist(raw: RawSession | null) {
   try {
-    localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+    if (raw) localStorage.setItem(SESSION_KEY, JSON.stringify(raw));
+    else localStorage.removeItem(SESSION_KEY);
   } catch {
     /* ignore */
   }
-  sessionStore.set(user);
-  return user;
+}
+
+export function getSession(): SessionUser | null {
+  return sessionStore.get()?.user ?? null;
+}
+
+export function getSessionToken(): string | null {
+  return sessionStore.get()?.token ?? null;
+}
+
+/** Store the session returned by verifyOtp. */
+export function setSession(token: string, user: { id: string; email: string; name: string }) {
+  const trimmed = user.name.trim();
+  const first = trimmed.split(" ")[0]?.[0] ?? "J";
+  const second = trimmed.split(" ")[1]?.[0] ?? "";
+  const session: RawSession = {
+    token,
+    user: {
+      id: user.id,
+      name: trimmed || "Juicy Rider",
+      email: user.email,
+      initials: (first + second).toUpperCase(),
+    },
+  };
+  persist(session);
+  sessionStore.set(session);
+}
+
+export function useSession(): SessionUser | null {
+  const raw = useSyncExternalStore(sessionStore.subscribe, sessionStore.get, () => null);
+  return raw?.user ?? null;
+}
+
+export function useSessionToken(): string | null {
+  return useSyncExternalStore(sessionStore.subscribe, sessionStore.get, () => null)?.token ?? null;
+}
+
+/* --------- Convex bridge (client is attached once from main.tsx) --------- */
+
+type MinimalConvexClient = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- bridge for api.auth.* refs only
+  query: (fn: any, args?: any) => Promise<any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- bridge for api.auth.* refs only
+  mutation: (fn: any, args?: any) => Promise<any>;
+};
+
+let convex: MinimalConvexClient | null = null;
+
+export function attachConvexClient(client: MinimalConvexClient) {
+  convex = client;
+  // if a stored token was revoked/expired server-side, drop the local session
+  const raw = sessionStore.get();
+  if (!raw) return;
+  client
+    .query(api.auth.me, { token: raw.token })
+    .then((me) => {
+      if (!me) {
+        persist(null);
+        sessionStore.set(null);
+      }
+    })
+    .catch(() => {
+      /* offline: keep the optimistic session */
+    });
 }
 
 export function signOut() {
-  try {
-    localStorage.removeItem(SESSION_KEY);
-  } catch {
-    /* ignore */
-  }
+  const raw = sessionStore.get();
+  persist(null);
   sessionStore.set(null);
-}
-
-export function useSession() {
-  return useStoreValue(sessionStore);
+  // best-effort server-side revocation; local session is already cleared
+  if (raw && convex) {
+    void convex.mutation(api.auth.signOutSession, { token: raw.token }).catch(() => {});
+  }
 }
 
 /* ---------------- cart (local) ---------------- */
@@ -149,7 +195,11 @@ export function cartCount(): number {
 }
 
 export function useCart() {
-  return useStoreValue(cartStore);
+  return useStoreValue2(cartStore);
+}
+
+function useStoreValue2<T>(store: ReturnType<typeof makeStore<T>>): T {
+  return useSyncExternalStore(store.subscribe, store.get, store.get);
 }
 
 /* ---------------- order status helpers (shared client/server timing) ---------------- */
