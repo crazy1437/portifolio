@@ -33,6 +33,7 @@ export default function Footer() {
           <ul className="mt-3 space-y-2 font-semibold text-cream-300">
             <li><Link to="/order" className="hover:text-cream-50">Order now</Link></li>
             <li><Link to="/track" className="hover:text-cream-50">Track an order</Link></li>
+            <li><Link to="/partner" className="hover:text-cream-50">For kitchens</Link></li>
             <li><Link to="/auth" className="hover:text-cream-50">Sign in</Link></li>
           </ul>
         </div>
@@ -47,7 +48,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="border-t border-cream-100/15 px-4 py-5 text-center text-sm font-semibold text-cream-300">
-        © {new Date().getFullYear()} MenuMoto — built juicy. Not a real delivery service (yet).
+        © {new Date().getFullYear()} JuicyBruh — built juicy. Not a real delivery service (yet).
       </div>
     </footer>
   );

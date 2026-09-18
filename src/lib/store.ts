@@ -30,7 +30,7 @@ function useStoreValue<T>(store: ReturnType<typeof makeStore<T>>): T {
 
 export type SessionUser = { name: string; email: string; initials: string; id: string };
 
-const SESSION_KEY = "menumoto.session";
+const SESSION_KEY = "juicybruh.session";
 
 const sessionStore = makeStore<SessionUser | null>(readSession());
 
@@ -53,7 +53,7 @@ export function signIn(name: string, email: string): SessionUser {
     // stable id per browser so Convex orders keep belonging to the same user
     id: existing?.id ?? `u-${crypto.randomUUID()}`,
     name: name.trim() || "Juicy Rider",
-    email: email.trim() || "hungry@menumoto.app",
+    email: email.trim() || "hungry@juicybruh.app",
     initials: (name.trim()[0] || "J").toUpperCase(),
   };
   try {

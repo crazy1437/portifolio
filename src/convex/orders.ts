@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { RIDERS } from "../lib/data";
+import type { Id } from "./_generated/dataModel";
 
 /* Seed data: restaurants + menu live in the database so the whole flow is
    Convex-backed. Seeding is idempotent. */
@@ -108,6 +109,18 @@ export const listRestaurants = query({
 export const getMenu = query({
   args: { restaurantId: v.string() },
   handler: async (ctx, args) => {
+    const items = await ctx.db
+      .query("menuItems")
+      .withIndex("by_restaurant_id", (q) => q.eq("restaurantId", args.restaurantId))
+      .collect();
+    // customers only ever see available items
+    return items.filter((i) => i.available !== false);
+  },
+});
+
+export const getOwnerMenu = query({
+  args: { restaurantId: v.string() },
+  handler: async (ctx, args) => {
     return await ctx.db
       .query("menuItems")
       .withIndex("by_restaurant_id", (q) => q.eq("restaurantId", args.restaurantId))
@@ -155,6 +168,18 @@ export const placeOrder = mutation({
       itemsTotal += line.price * line.qty;
     }
 
+    // refuse to cook items a partner has switched off
+    const menu = await ctx.db
+      .query("menuItems")
+      .withIndex("by_restaurant_id", (q) => q.eq("restaurantId", args.restaurantId))
+      .collect();
+    const unavailable = new Set(menu.filter((m) => m.available === false).map((m) => m.id));
+    for (const line of args.lines) {
+      if (unavailable.has(line.itemId)) {
+        throw new Error(`Sorry — ${line.name} just sold out. Remove it and try again.`);
+      }
+    }
+
     const rider = RIDERS[Math.floor(Math.random() * RIDERS.length)];
     const durationMs = restaurant.etaMin * 60 * 1000;
 
@@ -176,6 +201,17 @@ export const placeOrder = mutation({
     });
 
     return { orderId };
+  },
+});
+
+export const listKitchenOrders = query({
+  args: { restaurantId: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("orders")
+      .withIndex("by_restaurant", (q) => q.eq("restaurantId", args.restaurantId))
+      .order("desc")
+      .take(30);
   },
 });
 

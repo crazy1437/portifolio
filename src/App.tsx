@@ -4,6 +4,7 @@ import LandingPage from "./pages/LandingPage";
 import OrderPage from "./pages/OrderPage";
 import TrackPage from "./pages/TrackPage";
 import AuthPage from "./pages/AuthPage";
+import PartnerPage from "./pages/PartnerPage";
 import RequireAuth from "./components/RequireAuth";
 import ScrollToTop from "./components/ScrollToTop";
 import SeedBackend from "./lib/seed";
@@ -21,6 +22,14 @@ export default function App() {
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={<AuthPage />} />
+            <Route
+              path="/partner"
+              element={
+                <RequireAuth>
+                  <PartnerPage />
+                </RequireAuth>
+              }
+ />
             <Route
               path="/order"
               element={

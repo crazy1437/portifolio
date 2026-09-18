@@ -23,6 +23,8 @@ export default defineSchema({
     emoji: v.string(),
     juice: v.number(),
     tags: v.array(v.string()),
+    // partner-managed items can be switched off without deleting them
+    available: v.optional(v.boolean()),
   }).index("by_restaurant_id", ["restaurantId"]),
 
   orders: defineTable({
@@ -48,5 +50,16 @@ export default defineSchema({
     riderVehicle: v.string(),
     createdAt: v.number(),
     durationMs: v.number(),
-  }).index("by_user", ["userId"]),
+  })
+    .index("by_user", ["userId"])
+    .index("by_restaurant", ["restaurantId"]),
+
+  // links a signed-in partner account to the kitchen it owns
+  partners: defineTable({
+    userId: v.string(),
+    restaurantId: v.string(),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_restaurant", ["restaurantId"]),
 });
