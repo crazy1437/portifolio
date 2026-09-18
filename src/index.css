@@ -1,0 +1,200 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-body: "Nunito Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --color-pulp-950: #241a12;
+  --color-pulp-900: #3d2b1e;
+  --color-pulp-800: #5a3f2c;
+  --color-pulp-700: #7a5638;
+
+  --color-cream-50: #fdfbf5;
+  --color-cream-100: #f9f4e8;
+  --color-cream-200: #f2ead5;
+  --color-cream-300: #e9dcbe;
+
+  --color-mango-300: #ffd23f;
+  --color-mango-400: #ffc531;
+  --color-mango-500: #f5a623;
+
+  --color-pepper-300: #ff8a5c;
+  --color-pepper-400: #ff6b35;
+  --color-pepper-500: #ff5c1f;
+  --color-pepper-600: #e04a12;
+
+  --color-zest-300: #b8f26d;
+  --color-zest-400: #8fe04a;
+  --color-zest-500: #6bc93a;
+
+  --color-berry-400: #ff5c8a;
+  --color-berry-500: #f43f6e;
+
+  --color-guac-300: #7ce577;
+  --color-guac-400: #52c455;
+  --color-guac-500: #2fa843;
+
+  /* softer, layered shadows — same chunky soul, less ink */
+  --shadow-chunky-sm: 0 3px 0 rgba(36, 26, 18, 0.85);
+  --shadow-chunky: 0 4px 0 rgba(36, 26, 18, 0.85);
+  --shadow-chunky-md: 0 6px 0 rgba(36, 26, 18, 0.85);
+  --shadow-lift: 0 10px 24px -10px rgba(36, 26, 18, 0.35);
+
+  --animate-marquee: marquee 30s linear infinite;
+  --animate-wobble: wobble 2.6s ease-in-out infinite;
+  --animate-floaty: floaty 5s ease-in-out infinite;
+  --animate-pulse-ring: pulse-ring 1.8s ease-out infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes wobble {
+    0%,
+    100% {
+      transform: rotate(-3deg);
+    }
+    50% {
+      transform: rotate(3deg);
+    }
+  }
+  @keyframes floaty {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-12px);
+    }
+  }
+  @keyframes pulse-ring {
+    0% {
+      transform: scale(0.6);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(1.6);
+      opacity: 0;
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-cream-50 text-pulp-950 font-body antialiased;
+  background-image: radial-gradient(circle at 1px 1px, rgba(36, 26, 18, 0.045) 1px, transparent 0);
+  background-size: 26px 26px;
+}
+
+::selection {
+  background: var(--color-mango-300);
+  color: var(--color-pulp-950);
+}
+
+/* tasteful focus states everywhere */
+:where(button, a, input, select, textarea):focus-visible {
+  outline: 3px solid var(--color-pepper-400);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* slim, on-brand scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-cream-100);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-cream-300);
+  border-radius: 8px;
+  border: 2px solid var(--color-cream-100);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-pulp-700);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+/* ---------- chunky component utilities ---------- */
+
+@utility card-pop {
+  @apply rounded-3xl border-2 border-pulp-950 bg-white shadow-chunky transition-all duration-200;
+}
+
+@utility card-pop-hover {
+  @apply hover:-translate-y-1 hover:shadow-chunky-md;
+}
+
+@utility btn-chunky {
+  @apply inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-pulp-950 px-6 py-3 font-extrabold shadow-chunky-sm transition-all duration-150;
+}
+@utility btn-chunky-hover {
+  @apply hover:-translate-y-0.5 hover:shadow-chunky active:translate-y-0.5 active:shadow-none;
+}
+
+@utility btn-pepper {
+  @apply btn-chunky btn-chunky-hover bg-pepper-500 text-cream-50;
+}
+@utility btn-pepper-hover {
+  @apply hover:bg-pepper-600;
+}
+
+@utility btn-mango {
+  @apply btn-chunky btn-chunky-hover bg-mango-300 text-pulp-950;
+}
+@utility btn-mango-hover {
+  @apply hover:bg-mango-400;
+}
+
+@utility btn-cream {
+  @apply btn-chunky btn-chunky-hover bg-white text-pulp-950;
+}
+@utility btn-cream-hover {
+  @apply hover:bg-cream-100;
+}
+
+@utility eyebrow {
+  @apply inline-flex items-center gap-2 rounded-full border-2 border-pulp-950 px-3 py-1 text-xs font-extrabold uppercase tracking-widest;
+}
+
+@utility section-pad {
+  @apply px-4 sm:px-6 lg:px-10;
+}
+
+@utility skeleton {
+  @apply animate-pulse rounded-3xl border-2 border-pulp-950/10 bg-cream-200/70;
+}
+
+/* honor users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
