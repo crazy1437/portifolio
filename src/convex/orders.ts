@@ -161,24 +161,33 @@ export const placeOrder = mutation({
       .first();
     if (!restaurant) throw new Error("Unknown restaurant");
 
-    // validate + price server-side
-    let itemsTotal = 0;
-    for (const line of args.lines) {
-      if (line.qty <= 0) throw new Error("Invalid quantity");
-      itemsTotal += line.price * line.qty;
-    }
-
-    // refuse to cook items a partner has switched off
+    // validate + price server-side: the menu is the single source of truth
     const menu = await ctx.db
       .query("menuItems")
       .withIndex("by_restaurant_id", (q) => q.eq("restaurantId", args.restaurantId))
       .collect();
-    const unavailable = new Set(menu.filter((m) => m.available === false).map((m) => m.id));
-    for (const line of args.lines) {
-      if (unavailable.has(line.itemId)) {
-        throw new Error(`Sorry — ${line.name} just sold out. Remove it and try again.`);
+    const byId = new Map(menu.filter((m) => m.available !== false).map((m) => [m.id, m]));
+
+    let itemsTotal = 0;
+    const pricedLines = args.lines.map((line) => {
+      const item = byId.get(line.itemId);
+      if (!item) {
+        throw new Error(
+          `Sorry — ${line.name} is no longer on the menu. Remove it and try again.`,
+        );
       }
-    }
+      if (line.qty <= 0 || !Number.isInteger(line.qty)) {
+        throw new Error("Invalid quantity");
+      }
+      itemsTotal += item.price * line.qty;
+      return {
+        itemId: item.id,
+        name: item.name,
+        price: item.price,
+        qty: line.qty,
+        emoji: item.emoji,
+      };
+    });
 
     const rider = RIDERS[Math.floor(Math.random() * RIDERS.length)];
     const durationMs = restaurant.etaMin * 60 * 1000;
@@ -187,7 +196,7 @@ export const placeOrder = mutation({
       userId: args.userId,
       restaurantId: restaurant.id,
       restaurantName: restaurant.name,
-      lines: args.lines,
+      lines: pricedLines,
       itemsTotal,
       deliveryFee: restaurant.deliveryFee,
       total: itemsTotal + restaurant.deliveryFee,
