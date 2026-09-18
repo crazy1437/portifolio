@@ -1,19 +1,13 @@
 import { Link } from "react-router-dom";
-import { Bike, Instagram, Twitter, Youtube } from "lucide-react";
+import { Instagram, Twitter, Youtube } from "lucide-react";
+import { LogoLockup } from "./Logo";
 
 export default function Footer() {
   return (
     <footer className="border-t-2 border-pulp-950 bg-pulp-950 text-cream-100">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4">
         <div className="md:col-span-2">
-          <div className="flex items-center gap-2">
-            <span className="grid h-10 w-10 place-items-center rounded-2xl border-2 border-cream-100 bg-pepper-500">
-              <Bike className="h-5 w-5" strokeWidth={2.75} />
-            </span>
-            <span className="font-display text-2xl font-black">
-              Menu<span className="text-mango-300">Moto</span>
-            </span>
-          </div>
+          <LogoLockup dark className="text-cream-100" />
           <p className="mt-4 max-w-sm font-semibold text-cream-300">
             Juicy food, ridiculous speed. Delivered by the hardest-working scooters in the city.
           </p>
